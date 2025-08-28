@@ -1,37 +1,58 @@
 # SignalR Scale-Out with Redis (Redis-Backplane)
 
-This is a minimal ASP.NET Core project demonstrating how to scale out a SignalR Hub across multiple server instances using a Redis backplane.
+A guide on how to scale out an ASP.NET Core SignalR Hub across multiple server instances using a Redis backplane.
 
 ---
 
-## Setup
+## Configuration Steps
 
-1.  **Install the NuGet Package:** You need to add the required package to your project.
-    * [**Microsoft.AspNetCore.SignalR.StackExchangeRedis**](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR.StackExchangeRedis/)
+To enable SignalR scale-out with Redis in your own project, follow these steps.
 
-2.  **Configure Connection String:** Add your Redis connection string to the `appsettings.json` file.
+### 1. Install the NuGet Package
 
-    ```json
-    {
-      "ConnectionStrings": {
-        "Redis": "your_redis_connection_string_here"
-      }
-    }
-    ```
+First, add the required package to your project using the .NET CLI:
 
----
+```bash
+dotnet add package Microsoft.AspNetCore.SignalR.StackExchangeRedis
+````
 
-## How to Run
+### 2\. Configure Connection String
 
-1.  Clone the repository.
-2.  Ensure your Redis server is running.
-3.  Run the application using the .NET CLI:
-    ```bash
-    dotnet run
-    ```
-4.  You can run multiple instances of the application to test the scale-out functionality.
+Next, add your Redis connection string to your `appsettings.json` file.
 
----
+```json
+{
+  "ConnectionStrings": {
+    "Redis": "your_redis_connection_string_here"
+  }
+}
+```
+
+### 3\. Add the Service Configuration
+
+Finally, configure the Redis backplane in your `Program.cs` file. This code reads the connection string and tells SignalR to use Redis for message distribution.
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+
+// Get the Redis connection string
+var connectionString = builder.Configuration.GetConnectionString("Redis");
+
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new InvalidOperationException("The Redis connection string was not found.");
+}
+
+// Add SignalR and the Redis backplane
+builder.Services.AddSignalR()
+    .AddStackExchangeRedis(connectionString, options => {
+        options.Configuration.ChannelPrefix = "YourAppName:";
+    });
+
+// ... rest of your Program.cs
+```
+
+-----
 
 ## References
 
