@@ -7,7 +7,7 @@ This is a minimal ASP.NET Core project demonstrating how to scale out a SignalR 
 ## Setup
 
 1.  **Install the NuGet Package:** You need to add the required package to your project.
-    * [**Microsoft.AspNetCore.SignalR.StackExchangeRedis**](your_link_here)
+    * [**Microsoft.AspNetCore.SignalR.StackExchangeRedis**](https://www.nuget.org/packages/Microsoft.AspNetCore.SignalR.StackExchangeRedis/)
 
 2.  **Configure Connection String:** Add your Redis connection string to the `appsettings.json` file.
 
